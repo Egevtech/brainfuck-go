@@ -42,18 +42,25 @@ func main() {
 		return
 	}
 
+	assemble()
+	link()
+}
+
+func assemble() {
 	nasm_command := exec.Command("nasm", "-felf64", "out.s", "-o", "out.o")
 	nasm_command.Stderr = os.Stderr
 	nasm_command.Stdout = os.Stdout
-	if err = nasm_command.Run(); err != nil {
+	if err := nasm_command.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to run nasm: %s\n", err)
 		return
 	}
+}
 
+func link() {
 	ld_command := exec.Command("ld", "out.o", "bfstd.a", "-lc", "-dynamic-linker", "/lib64/ld-linux-x86-64.so.2", "-o", args.Output)
 	ld_command.Stderr = os.Stderr
 	ld_command.Stdout = os.Stdout
-	if err = ld_command.Run(); err != nil {
+	if err := ld_command.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
 		return
 	}
