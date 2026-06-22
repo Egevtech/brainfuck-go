@@ -1,6 +1,6 @@
 module github.com/egevtech/brainfuck
 
-go 1.26.4
+go 1.26
 
 require (
 	github.com/alexflint/go-arg v1.6.1 // indirect
