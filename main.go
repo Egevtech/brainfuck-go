@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/alexflint/go-arg"
+	"github.com/egevtech/brainfuck/computils"
 )
 
 var args struct {
@@ -26,14 +27,14 @@ func main() {
 		return
 	}
 
-	tokens, err := Tokenize(string(content))
+	tokens, err := computils.Tokenize(string(content))
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Tokenizer failed: %s\n", err)
 		return
 	}
 
-	contents := Codegen(tokens)
+	contents := computils.Codegen(tokens)
 
 	err = os.WriteFile("./out.s", []byte(contents), 0666)
 	if err != nil {
