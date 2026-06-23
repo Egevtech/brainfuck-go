@@ -10,15 +10,11 @@ import (
 
 var args struct {
 	Input  string `arg:"positional,required" help:"File to compile"`
-	Output string `arg:"-o" help:"Output file"`
+	Output string `arg:"-o" help:"Output file" default:"a.out"`
 }
 
 func main() {
 	arg.MustParse(&args)
-
-	if args.Output == "" {
-		args.Output = "a.out"
-	}
 
 	content, err := os.ReadFile(args.Input)
 
