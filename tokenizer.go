@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"unicode"
+)
 
 type Token int
 
@@ -55,6 +58,10 @@ func Tokenize(input string) ([]Token, error) {
 	tokens := []Token{}
 
 	for _, char := range input {
+		if unicode.IsSpace(char) {
+			continue
+		}
+
 		switch char {
 		case '.':
 			tok_append(&tokens, TOKEN_PRINT)
