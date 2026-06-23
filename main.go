@@ -57,7 +57,13 @@ func assemble() {
 }
 
 func link() {
-	ld_command := exec.Command("ld", "out.o", "bfstd.a", "-lc", "-dynamic-linker", "/lib64/ld-linux-x86-64.so.2", "-o", args.Output)
+	ld_command := exec.Command(
+		"ld", "out.o", "bfstd.a",
+		"-lc", "-dynamic-linker",
+		"/lib64/ld-linux-x86-64.so.2",
+		"-o", args.Output,
+	)
+
 	ld_command.Stderr = os.Stderr
 	ld_command.Stdout = os.Stdout
 	if err := ld_command.Run(); err != nil {
