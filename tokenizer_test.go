@@ -3,8 +3,8 @@ package main
 import "testing"
 
 func TestTokenizer(t *testing.T) {
-	str := "+-<>.D"
-	expected := []Token{TOKEN_ADD, TOKEN_SUB, TOKEN_PREV, TOKEN_NEXT, TOKEN_PRINT, TOKEN_DEBUG}
+	str := "+-<>.D[]"
+	expected := []Token{TOKEN_ADD, TOKEN_SUB, TOKEN_PREV, TOKEN_NEXT, TOKEN_PRINT, TOKEN_DEBUG, TOKEN_LOOP_START, TOKEN_LOOP_END}
 	tokens, err := Tokenize(str)
 
 	if err != nil {
