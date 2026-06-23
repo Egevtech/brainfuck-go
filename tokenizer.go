@@ -13,6 +13,9 @@ const (
 
 	TOKEN_PRINT
 	TOKEN_DEBUG
+
+	TOKEN_LOOP_START
+	TOKEN_LOOP_END
 )
 
 func (t Token) String() string {
@@ -29,6 +32,10 @@ func (t Token) String() string {
 		return "TOKEN_PRINT"
 	case TOKEN_DEBUG:
 		return "TOKEN_DEBUG"
+	case TOKEN_LOOP_START:
+		return "TOKEN_LOOP_START"
+	case TOKEN_LOOP_END:
+		return "TOKEN_LOOP_END"
 	}
 
 	return ""
@@ -63,6 +70,11 @@ func Tokenize(input string) ([]Token, error) {
 			tok_append(&tokens, TOKEN_NEXT)
 		case '<':
 			tok_append(&tokens, TOKEN_PREV)
+
+		case '[':
+			tok_append(&tokens, TOKEN_LOOP_START)
+		case ']':
+			tok_append(&tokens, TOKEN_LOOP_END)
 
 		default:
 			return []Token{}, fmt.Errorf("Unexpected token: %c", char)
