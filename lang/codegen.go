@@ -1,6 +1,10 @@
-package computils
+package lang
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/egevtech/brainfuck/util"
+)
 
 func Codegen(tokens []Token) string {
 	var contents string
@@ -13,7 +17,7 @@ func Codegen(tokens []Token) string {
 
 	nesting_level := 0
 
-	ForEach(tokens, func(index int, token Token) {
+	util.ForEach(tokens, func(index int, token Token) {
 		var stdcall string
 
 		switch token {

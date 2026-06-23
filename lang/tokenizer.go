@@ -1,4 +1,4 @@
-package computils
+package lang
 
 import (
 	"fmt"
@@ -42,12 +42,6 @@ func (t Token) String() string {
 	}
 
 	return ""
-}
-
-func ForEach[T any](i []T, lb func(int, T)) {
-	for index, curr := range i {
-		lb(index, curr)
-	}
 }
 
 func tok_append(vec *[]Token, token Token) {

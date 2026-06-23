@@ -1,4 +1,4 @@
-package computils
+package lang
 
 import "testing"
 
