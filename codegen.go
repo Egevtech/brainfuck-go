@@ -45,7 +45,7 @@ func Codegen(tokens []Token) string {
 		contents += fmt.Sprintf("\tmov rdi, [vec]\n\tmov rsi, cell\n\tcall %s\n\n", stdcall)
 	})
 
-	contents += "\tmov rax, 60\n\tmov rdi, 0\n\tsyscall"
+	contents += "\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n"
 
 	return contents
 }
