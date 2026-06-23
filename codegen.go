@@ -21,10 +21,12 @@ func Codegen(tokens []Token) string {
 			stdcall = "add_cell"
 		case TOKEN_SUB:
 			stdcall = "sub_cell"
+
 		case TOKEN_NEXT:
 			stdcall = "next_cell"
 		case TOKEN_PREV:
 			stdcall = "prev_cell"
+
 		case TOKEN_PRINT:
 			stdcall = "print_cell"
 		case TOKEN_DEBUG:
