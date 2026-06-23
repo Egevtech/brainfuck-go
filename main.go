@@ -11,6 +11,9 @@ import (
 var args struct {
 	Input  string `arg:"positional,required" help:"File to compile"`
 	Output string `arg:"-o" help:"Output file" default:"a.out"`
+
+	CompileOnly     bool `arg:"-S" help:"Compile only, do not assembly or link"`
+	CompileAssembly bool `arg:"-c" help:"Compile and assembly, but do not link"`
 }
 
 func main() {
@@ -38,8 +41,27 @@ func main() {
 		return
 	}
 
-	assemble()
-	link()
+	if args.CompileOnly {
+		return
+	} else {
+		assemble()
+
+		err := os.Remove("out.s")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to remove assembler file: %s\n", err)
+		}
+	}
+
+	if args.CompileAssembly {
+		return
+	} else {
+		link()
+
+		err := os.Remove("out.o")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to remove object file: %s\n", err)
+		}
+	}
 }
 
 func assemble() {
