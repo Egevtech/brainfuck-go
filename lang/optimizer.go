@@ -14,6 +14,12 @@ type ParSub ParCommand
 type ParMoveFor ParCommand
 type ParMoveBack ParCommand
 
+type ParLoopStart ParCommand
+type ParLoopEnd ParCommand
+
+type ParPrint ParCommand
+type ParDebug ParCommand
+
 func (t ParAdd) String() string {
 	return fmt.Sprintf("ParAdd{%d}", t.Value)
 }
@@ -78,6 +84,14 @@ func Optimize(tokens []Token) []any {
 				}
 			}
 			res = append(res, ParMoveBack{Value: counter})
+		case TOKEN_LOOP_START:
+			res = append(res, ParLoopStart{})
+		case TOKEN_LOOP_END:
+			res = append(res, ParLoopEnd{})
+		case TOKEN_DEBUG:
+			res = append(res, ParDebug{})
+		case TOKEN_PRINT:
+			res = append(res, ParPrint{})
 		}
 	}
 
