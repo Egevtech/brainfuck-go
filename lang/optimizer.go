@@ -36,6 +36,22 @@ func (t ParMoveBack) String() string {
 	return fmt.Sprintf("ParMoveBack{%d}", t.Value)
 }
 
+func (t ParLoopStart) String() string {
+	return fmt.Sprint("ParLoopStart{}")
+}
+
+func (t ParLoopEnd) String() string {
+	return fmt.Sprint("ParLoopEnd{}")
+}
+
+func (t ParDebug) String() string {
+	return fmt.Sprint("ParDebug{}")
+}
+
+func (t ParPrint) String() string {
+	return fmt.Sprint("ParPrint{}")
+}
+
 func Optimize(tokens []Token) []any {
 	var res []any // ParCommand
 	current := 0
@@ -85,13 +101,17 @@ func Optimize(tokens []Token) []any {
 			}
 			res = append(res, ParMoveBack{Value: counter})
 		case TOKEN_LOOP_START:
-			res = append(res, ParLoopStart{})
+			res = append(res, ParLoopStart{0})
+			current++
 		case TOKEN_LOOP_END:
-			res = append(res, ParLoopEnd{})
+			res = append(res, ParLoopEnd{0})
+			current++
 		case TOKEN_DEBUG:
-			res = append(res, ParDebug{})
+			res = append(res, ParDebug{0})
+			current++
 		case TOKEN_PRINT:
-			res = append(res, ParPrint{})
+			res = append(res, ParPrint{0})
+			current++
 		}
 	}
 
