@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-        "runtime"
+	"runtime"
 
 	"github.com/alexflint/go-arg"
 	"github.com/egevtech/brainfuck/lang"
@@ -69,7 +69,7 @@ func main() {
 func assemble() {
 	arch := runtime.GOARCH
 	switch arch {
-        case "amd64":
+	case "amd64":
 		nasm_command := exec.Command("nasm", "-felf64", "out.s", "-o", "out.o")
 		nasm_command.Stderr = os.Stderr
 		nasm_command.Stdout = os.Stdout
@@ -79,25 +79,25 @@ func assemble() {
 		}
 	case "arm64":
 		as_command := exec.Command("as", "-o", "out.o", "out.s")
-                as_command.Stderr = os.Stderr
-                as_command.Stdout = os.Stdout
-                if err := as_command.Run(); err != nil {
-                        fmt.Fprintf(os.Stderr, "Failed to run as: %s\n", err)
-                        return
-                }
+		as_command.Stderr = os.Stderr
+		as_command.Stdout = os.Stdout
+		if err := as_command.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to run as: %s\n", err)
+			return
+		}
 	}
 }
 
 func link() {
 	arch := runtime.GOARCH
 	switch arch {
-        case "amd64":
+	case "amd64":
 		ld_command := exec.Command(
-                        "ld", "out.o", "bfstd-x86_64.a",
-                        "-lc", "-dynamic-linker",
-                        "/lib64/ld-linux-x86-64.so.2",
-                        "-o", args.Output,
-                )
+			"ld", "out.o", "bfstd-x86_64.a",
+			"-lc", "-dynamic-linker",
+			"/lib64/ld-linux-x86-64.so.2",
+			"-o", args.Output,
+		)
 
 		ld_command.Stderr = os.Stderr
 		ld_command.Stdout = os.Stdout
@@ -105,19 +105,19 @@ func link() {
 			fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
 			return
 		}
-        case "arm64":
+	case "arm64":
 		ld_command := exec.Command(
-                        "ld", "out.o", "bfstd-arm64.a",
-                        "-lc", "-dynamic-linker",
-                        "/lib/ld-linux-aarch64.so.1",
-                        "-o", args.Output,
-                )
+			"ld", "out.o", "bfstd-arm64.a",
+			"-lc", "-dynamic-linker",
+			"/lib/ld-linux-aarch64.so.1",
+			"-o", args.Output,
+		)
 
-                ld_command.Stderr = os.Stderr
-                ld_command.Stdout = os.Stdout
-                if err := ld_command.Run(); err != nil {
-                        fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
-                        return
-                }
+		ld_command.Stderr = os.Stderr
+		ld_command.Stdout = os.Stdout
+		if err := ld_command.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
+			return
+		}
 	}
 }
