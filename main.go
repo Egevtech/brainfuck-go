@@ -68,56 +68,50 @@ func main() {
 
 func assemble() {
 	arch := runtime.GOARCH
+
+	var asm_command *exec.Cmd
+
 	switch arch {
 	case "amd64":
-		nasm_command := exec.Command("nasm", "-felf64", "out.s", "-o", "out.o")
-		nasm_command.Stderr = os.Stderr
-		nasm_command.Stdout = os.Stdout
-		if err := nasm_command.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to run nasm: %s\n", err)
-			return
-		}
+		asm_command = exec.Command("nasm", "-felf64", "out.s", "-o", "out.o")
 	case "arm64":
-		as_command := exec.Command("as", "-o", "out.o", "out.s")
-		as_command.Stderr = os.Stderr
-		as_command.Stdout = os.Stdout
-		if err := as_command.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to run as: %s\n", err)
-			return
-		}
+		asm_command = exec.Command("as", "-o", "out.o", "out.s")
+	}
+
+	asm_command.Stderr = os.Stderr
+	asm_command.Stdout = os.Stdout
+	if err := asm_command.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to run assemler: %s\n", err)
+		return
 	}
 }
 
 func link() {
 	arch := runtime.GOARCH
+
+	var ld_command *exec.Cmd
+
 	switch arch {
 	case "amd64":
-		ld_command := exec.Command(
+		ld_command = exec.Command(
 			"ld", "out.o", "bfstd-x86_64.a",
 			"-lc", "-dynamic-linker",
 			"/lib64/ld-linux-x86-64.so.2",
 			"-o", args.Output,
 		)
-
-		ld_command.Stderr = os.Stderr
-		ld_command.Stdout = os.Stdout
-		if err := ld_command.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
-			return
-		}
 	case "arm64":
-		ld_command := exec.Command(
+		ld_command = exec.Command(
 			"ld", "out.o", "bfstd-arm64.a",
 			"-lc", "-dynamic-linker",
 			"/lib/ld-linux-aarch64.so.1",
 			"-o", args.Output,
 		)
+	}
 
-		ld_command.Stderr = os.Stderr
-		ld_command.Stdout = os.Stdout
-		if err := ld_command.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
-			return
-		}
+	ld_command.Stderr = os.Stderr
+	ld_command.Stdout = os.Stdout
+	if err := ld_command.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
+		return
 	}
 }
