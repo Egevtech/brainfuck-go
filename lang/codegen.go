@@ -3,7 +3,7 @@ package lang
 import (
 	"fmt"
 
-	"github.com/egevtech/brainfuck/util"
+	"github.com/egevtech/foreach"
 )
 
 func Codegen(tokens []Token) string {
@@ -17,7 +17,7 @@ func Codegen(tokens []Token) string {
 	contents += stdfunctions
 	contents += "\n\nsection .text\n_start:\n\tcall vector_init\n\tmov [vec], rax\n\n"
 
-	util.ForEach(tokens, func(index int, token Token) {
+	foreach.ForEach(tokens, func(index int, token Token) {
 		var stdcall string
 
 		switch token {
