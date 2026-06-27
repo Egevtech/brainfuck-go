@@ -37,19 +37,19 @@ func (t ParMoveBack) String() string {
 }
 
 func (t ParLoopStart) String() string {
-	return fmt.Sprint("ParLoopStart{}")
+	return "ParLoopStart{}"
 }
 
 func (t ParLoopEnd) String() string {
-	return fmt.Sprint("ParLoopEnd{}")
+	return "ParLoopEnd{}"
 }
 
 func (t ParDebug) String() string {
-	return fmt.Sprint("ParDebug{}")
+	return "ParDebug{}"
 }
 
 func (t ParPrint) String() string {
-	return fmt.Sprint("ParPrint{}")
+	return "ParPrint{}"
 }
 
 func Optimize(tokens []Token) []any {
