@@ -6,3 +6,6 @@ brainfuck
 # Build objects
 *.s
 *.o
+
+# Outputs
+*.out
