@@ -47,7 +47,7 @@ func Codegen(tokens []any) string {
 		}
 	})
 
-	contents += "mov rsp, rpb\n\tpop rbp\n\n\tcall ln\n\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n"
+	contents += "mov rsp, rbp\n\tpop rbp\n\n\tcall ln\n\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n"
 
 	return contents
 }
