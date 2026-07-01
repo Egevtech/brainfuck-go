@@ -15,7 +15,7 @@ func Codegen(tokens []any) string {
 
 	contents += "default rel\nsection .data\nglobal main\n\nvec dq 0\ncell dd 0\n\nextern "
 	contents += stdfunctions
-	contents += "\n\nsection .text\nmain:\n\tcall vector_init\n\tmov [vec], rax\n\n"
+	contents += "\n\nsection .text\nmain:\n\tpush rbp\n\tmov rbp, rsp\n\n\tcall vector_init\n\tmov [vec], rax\n\n"
 
 	foreach.ForEach(tokens, func(index int, token any) {
 		switch t := token.(type) {
@@ -47,7 +47,7 @@ func Codegen(tokens []any) string {
 		}
 	})
 
-	contents += "\n\tcall ln\n\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n"
+	contents += "mov rsp, rpb\n\tpop rbp\n\n\tcall ln\n\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n"
 
 	return contents
 }
