@@ -39,13 +39,17 @@ func Codegen(tokens []any) string {
 
 			nesting_level--
 			if nesting_level < 0 {
-				panic("Unclosed loop")
+				panic("Переclosed loop")
 			}
 
 		default:
 			panic("Unexpected ParCommand while generating code")
 		}
 	})
+
+	if nesting_level > 0 {
+		panic("Unclosed loop")
+	}
 
 	contents += "mov rsp, rbp\n\tpop rbp\n\n\tcall ln\n\n\tmov rax, 0\n\tret"
 
