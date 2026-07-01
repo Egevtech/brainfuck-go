@@ -1,1 +1,11 @@
 brainfuck
+
+# Brainfuck sources
+*.bf
+
+# Build objects
+*.s
+*.o
+
+# Outputs
+*.out

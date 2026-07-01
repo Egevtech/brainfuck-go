@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"runtime"
 
 	"github.com/alexflint/go-arg"
 	"github.com/egevtech/brainfuck/lang"
@@ -35,7 +34,9 @@ func main() {
 		return
 	}
 
-	contents := lang.Codegen(tokens)
+	optTokens := lang.Optimize(tokens)
+
+	contents := lang.Codegen(optTokens)
 
 	err = os.WriteFile("./out.s", []byte(contents), 0666)
 	if err != nil {
@@ -57,6 +58,7 @@ func main() {
 	if args.CompileAssembly {
 		return
 	} else {
+		buildStdlib()
 		link()
 
 		err := os.Remove("out.o")
@@ -66,52 +68,44 @@ func main() {
 	}
 }
 
-func assemble() {
-	arch := runtime.GOARCH
+func buildStdlib() {
+	var cs_command *exec.Cmd
 
+	cs_command = exec.Command("bash", "./build.sh")
+
+	cs_command.Dir = "external/bfstdlib"
+	cs_command.Stderr = os.Stderr
+	cs_command.Stdout = os.Stdout
+
+	if err := cs_command.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to build stdlib: %s\n", err)
+		panic("Build failed")
+	}
+}
+
+func assemble() {
 	var asm_command *exec.Cmd
 
-	switch arch {
-	case "amd64":
-		asm_command = exec.Command("nasm", "-felf64", "out.s", "-o", "out.o")
-	case "arm64":
-		asm_command = exec.Command("as", "-o", "out.o", "out.s")
-	}
+	asm_command = exec.Command("nasm", "-felf64", "out.s", "-o", "out.o")
 
 	asm_command.Stderr = os.Stderr
 	asm_command.Stdout = os.Stdout
+
 	if err := asm_command.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to run assemler: %s\n", err)
-		return
+		panic("Build failed")
 	}
 }
 
 func link() {
-	arch := runtime.GOARCH
-
 	var ld_command *exec.Cmd
 
-	switch arch {
-	case "amd64":
-		ld_command = exec.Command(
-			"ld", "out.o", "bfstd-x86_64.a",
-			"-lc", "-dynamic-linker",
-			"/lib64/ld-linux-x86-64.so.2",
-			"-o", args.Output,
-		)
-	case "arm64":
-		ld_command = exec.Command(
-			"ld", "out.o", "bfstd-arm64.a",
-			"-lc", "-dynamic-linker",
-			"/lib/ld-linux-aarch64.so.1",
-			"-o", args.Output,
-		)
-	}
+	ld_command = exec.Command("clang", "out.o", "external/bfstdlib/stdlib.a")
 
 	ld_command.Stderr = os.Stderr
 	ld_command.Stdout = os.Stdout
 	if err := ld_command.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to run ld: %s\n", err)
-		return
+		panic("Build failed")
 	}
 }

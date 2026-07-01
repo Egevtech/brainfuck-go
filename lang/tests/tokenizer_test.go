@@ -1,11 +1,15 @@
-package lang
+package tests
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/egevtech/brainfuck/lang"
+)
 
 func TestTokenizer(t *testing.T) {
 	str := "+-<>.D[]"
-	expected := []Token{TOKEN_ADD, TOKEN_SUB, TOKEN_PREV, TOKEN_NEXT, TOKEN_PRINT, TOKEN_DEBUG, TOKEN_LOOP_START, TOKEN_LOOP_END}
-	tokens, err := Tokenize(str)
+	expected := []lang.Token{lang.TOKEN_ADD, lang.TOKEN_SUB, lang.TOKEN_PREV, lang.TOKEN_NEXT, lang.TOKEN_PRINT, lang.TOKEN_DEBUG, lang.TOKEN_LOOP_START, lang.TOKEN_LOOP_END}
+	tokens, err := lang.Tokenize(str)
 
 	if err != nil {
 		t.Fatalf("Tokenizer failed: %s", err)

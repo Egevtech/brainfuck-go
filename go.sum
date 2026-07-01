@@ -3,5 +3,11 @@ github.com/alexflint/go-arg v1.6.1/go.mod h1:nQ0LFYftLJ6njcaee0sU+G0iS2+2XJQfA8I
 github.com/alexflint/go-scalar v1.2.0 h1:WR7JPKkeNpnYIOfHRa7ivM21aWAdHD0gEWHCx+WQBRw=
 github.com/alexflint/go-scalar v1.2.0/go.mod h1:LoFvNMqS1CPrMVltza4LvnGKhaSpc3oyLEBUZVhhS2o=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/egevtech/foreach v0.0.0-20260627211801-0bde6ec7b4dc h1:Hj+CbsXm3Js8N94QnixFguAFyFhgoi3Q1qZ98Im5yPA=
+github.com/egevtech/foreach v0.0.0-20260627211801-0bde6ec7b4dc/go.mod h1:gjWxsEe7AOMwvREhiyIlm+XChzzmJTJoEyQ0iURQTvI=
+github.com/egevtech/foreach v0.0.0-20260627212704-b25737381107 h1:xO73IPHr+tpKwyAi2nFWTmoLIMF4ZoaKD/9JRE8MKhs=
+github.com/egevtech/foreach v0.0.0-20260627212704-b25737381107/go.mod h1:gjWxsEe7AOMwvREhiyIlm+XChzzmJTJoEyQ0iURQTvI=
+github.com/egevtech/foreach v1.0.0 h1:acCN7Pew7fhY029SnVp5i8HxG64zgGkA2WTGugBpkfU=
+github.com/egevtech/foreach v1.0.0/go.mod h1:gjWxsEe7AOMwvREhiyIlm+XChzzmJTJoEyQ0iURQTvI=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=

@@ -1,0 +1,3 @@
+[submodule "external/bfstdlib"]
+	path = external/bfstdlib
+	url = https://github.com/egevtech/bfstdlib

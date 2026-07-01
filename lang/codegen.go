@@ -2,105 +2,52 @@ package lang
 
 import (
 	"fmt"
-	"runtime"
 
-	"github.com/egevtech/brainfuck/util"
+	"github.com/egevtech/foreach"
 )
 
-func Codegen(tokens []Token) string {
+func Codegen(tokens []any) string {
 	var contents string
 
-	arch := runtime.GOARCH
-	stdfunctions := "vector_init, read_cell, next_cell, prev_cell, add_cell, sub_cell, print_cell, print_cell_num"
+	stdfunctions := "vector_init, move_forward, move_backward, add_to_cell, sub_from_cell, print_cell, print_cell_num, ln, vector_get"
 
 	nesting_level := 0
 
-	switch arch {
-	case "amd64":
+	contents += "default rel\nsection .data\nglobal main\n\nvec dq 0\ncell dd 0\n\nextern "
+	contents += stdfunctions
+	contents += "\n\nsection .text\nmain:\n\tpush rbp\n\tmov rbp, rsp\n\n\tcall vector_init\n\tmov [vec], rax\n\n"
 
-		contents += "section .data\nglobal _start\n\nvec dq 0\ncell dd 0\n\nextern "
-		contents += stdfunctions
-		contents += "\n\nsection .text\n_start:\n\tcall vector_init\n\tmov [vec], rax\n\n"
+	foreach.ForEach(tokens, func(index int, token any) {
+		switch t := token.(type) {
+		case ParAdd:
+			contents += fmt.Sprintf("\n\tmov rdi, [vec]\n\tmov rsi, %d\n\tcall add_to_cell\n", t.Value)
+		case ParSub:
+			contents += fmt.Sprintf("\n\tmov rdi, [vec]\n\tmov rsi, %d\n\tcall sub_from_cell\n", t.Value)
+		case ParMoveFor:
+			contents += fmt.Sprintf("\n\tmov rdi, [vec]\n\tmov rsi, %d\n\tcall move_forward\n", t.Value)
+		case ParMoveBack:
+			contents += fmt.Sprintf("\n\tmov rdi, [vec]\n\tmov rsi, %d\n\tcall move_backward\n", t.Value)
+		case ParDebug:
+			contents += "\n\tmov rdi, [vec]\n\tcall print_cell_num\n"
+		case ParPrint:
+			contents += "\n\tmov rdi, [vec]\n\tcall print_cell\n"
+		case ParLoopStart:
+			nesting_level++
+			contents += fmt.Sprintf("\n;LOOP%d-START\n\tloop%d_start:\n\n\tmov rdi, [vec]\n\tcall vector_get\n\tcmp rax, 0\n\tje loop%d_end\n", nesting_level, nesting_level, nesting_level)
+		case ParLoopEnd:
+			contents += fmt.Sprintf("\n\tjmp loop%d_start\n\tloop%d_end:\n", nesting_level, nesting_level)
 
-		util.ForEach(tokens, func(index int, token Token) {
-			var stdcall string
-
-			switch token {
-			case TOKEN_ADD:
-				stdcall = "add_cell"
-			case TOKEN_SUB:
-				stdcall = "sub_cell"
-
-			case TOKEN_NEXT:
-				stdcall = "next_cell"
-			case TOKEN_PREV:
-				stdcall = "prev_cell"
-
-			case TOKEN_PRINT:
-				stdcall = "print_cell"
-			case TOKEN_DEBUG:
-				stdcall = "print_cell_num"
-
-			case TOKEN_LOOP_START:
-				nesting_level++
-				contents += fmt.Sprintf("\n;----LOOP%d-START----\n\tloop%d:\n", nesting_level, nesting_level)
-				contents += "mov rdi, [vec]\n\tmov rsi, cell\n"
-				contents += fmt.Sprintf("\tcall read_cell\n\tcmp rax, 0\n\tje loop%d_end\n\n", nesting_level)
-				return
-			case TOKEN_LOOP_END:
-				contents += fmt.Sprintf("\tjmp loop%d\n\tloop%d_end:\n;----LOOP%d-END----\n\n", nesting_level, nesting_level, nesting_level)
-				nesting_level--
-				return
+			nesting_level--
+			if nesting_level < 0 {
+				panic("Unclosed loop")
 			}
 
-			contents += fmt.Sprintf("\tmov rdi, [vec]\n\tmov rsi, cell\n\tcall %s\n\n", stdcall)
-		})
+		default:
+			panic("Unexpected ParCommand while generating code")
+		}
+	})
 
-		contents += "\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n"
+	contents += "mov rsp, rbp\n\tpop rbp\n\n\tcall ln\n\n\tmov rax, 0\n\tret"
 
-		return contents
-	case "arm64":
-		contents += ".section .data\n.global _start\n\nvec:    .quad 0\ncell:   .word 0\n.extern "
-		contents += stdfunctions
-		contents += "\n\n.section .text\n_start:\n\tbl vector_init\n\tadrp x1, vec\n\tadd x1, x1, :lo12:vec\n\tstr x0, [x1]\n\n"
-
-		util.ForEach(tokens, func(index int, token Token) {
-			var stdcall string
-
-			switch token {
-			case TOKEN_ADD:
-				stdcall = "add_cell"
-			case TOKEN_SUB:
-				stdcall = "sub_cell"
-
-			case TOKEN_NEXT:
-				stdcall = "next_cell"
-			case TOKEN_PREV:
-				stdcall = "prev_cell"
-
-			case TOKEN_PRINT:
-				stdcall = "print_cell"
-			case TOKEN_DEBUG:
-				stdcall = "print_cell_num"
-
-			case TOKEN_LOOP_START:
-				nesting_level++
-				contents += fmt.Sprintf("\n//----LOOP%d-START----\n\tloop%d:\n", nesting_level, nesting_level)
-				contents += "\tldr x0, =vec\n\tldr x0, [x0]\n\n\tldr x1, =cell\n"
-				contents += fmt.Sprintf("\tbl read_cell\n\tcmp x0, #0\n\tbeq loop%d_end\n\n", nesting_level)
-				return
-			case TOKEN_LOOP_END:
-				contents += fmt.Sprintf("\tb loop%d\n\tloop%d_end:\n//----LOOP%d-END----\n\n", nesting_level, nesting_level, nesting_level)
-				nesting_level--
-				return
-			}
-
-			contents += fmt.Sprintf("\tldr x0, =vec\n\tldr x0, [x0]\n\n\tldr x1, =cell\n\tbl %s\n\n", stdcall)
-		})
-
-		contents += "\tmov x8, #93\n\tmov x0, #0\n\tsvc #0\n"
-		return contents
-	default:
-		return ""
-	}
+	return contents
 }
